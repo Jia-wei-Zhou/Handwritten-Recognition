@@ -1,3 +1,5 @@
+import { appkey } from "./appkey.json";
+
 let canvas; // refenrence to canvas element
 let ctx; //reference to context
 let dragging = false;
@@ -230,10 +232,7 @@ function Cut() {
 
 function GetAppToken() {
   let Hkey = ["app_key", "Content-Type"];
-  let Hvalue = [
-    "ab4a2249af20e78c841866d7abc30d4eb526d01ed2b4e02564c782aa78b24a94",
-    "application/json",
-  ];
+  let Hvalue = [appkey, "application/json"];
   let url = "https://api.mathpix.com/v3/app-tokens";
   let dataJSON = { include_strokes_session_id: true };
   let data = JSON.stringify(dataJSON);
@@ -253,7 +252,7 @@ function GetAppToken() {
       app_token = tokenJSON.app_token;
       app_token_expires_at = tokenJSON.app_token_expires_at;
       session_id = tokenJSON.strokes_session_id;
-      //console.log(tokenJSON);
+      console.log(tokenJSON);
     }
   };
 
@@ -264,8 +263,27 @@ function RequestRecognition() {
   let url = "https://api.mathpix.com/v3/strokes";
   let Hkey = ["app_token", "Content-Type"];
   let Hvalue = [app_token, "application/json"];
-  let dataJSON = { strokes: strokesJSON, strokes_session_id: session_id };
+  let dataOptJson = {
+    include_svg: true,
+    include_latex: true,
+    include_tsv: true,
+    include_asciimath: true,
+    include_mathml: true,
+  };
+  //let dataOpt = JSON.stringify(dataOptJson);
+  let dataJSON = {
+    strokes: strokesJSON,
+    strokes_session_id: session_id,
+    formats: ["latex_styled", "data"],
+    data_options: {
+      include_asciimath: true,
+      include_mathml: true,
+      include_latex: true,
+    },
+    include_line_data: true,
+  };
   let data = JSON.stringify(dataJSON);
+  console.log(data);
   var xhr = new XMLHttpRequest();
 
   xhr.open("POST", url);
@@ -279,6 +297,9 @@ function RequestRecognition() {
       //console.log(xhr.status);
       let response = xhr.responseText;
       let result = JSON.parse(response);
+      console.log(result);
+      //result = JSON.parse(result.data);
+      //console.log(result);
       let resultText = result.latex_styled;
       let element = document.getElementById("equation");
       katex.render(resultText, element, {
