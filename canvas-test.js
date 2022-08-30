@@ -1,5 +1,3 @@
-import { appkey } from "./appkey.json";
-
 let canvas; // refenrence to canvas element
 let ctx; //reference to context
 let dragging = false;
@@ -232,7 +230,7 @@ function Cut() {
 
 function GetAppToken() {
   let Hkey = ["app_key", "Content-Type"];
-  let Hvalue = [appkey, "application/json"];
+  let Hvalue = [Appkey.appkey, "application/json"];
   let url = "https://api.mathpix.com/v3/app-tokens";
   let dataJSON = { include_strokes_session_id: true };
   let data = JSON.stringify(dataJSON);
@@ -262,7 +260,7 @@ function GetAppToken() {
 function RequestRecognition() {
   let url = "https://api.mathpix.com/v3/strokes";
   let Hkey = ["app_token", "Content-Type"];
-  let Hvalue = [app_token, "application/json"];
+  let Hvalue = ["YOUR KEY", "application/json"]; // replace your key here
   let dataOptJson = {
     include_svg: true,
     include_latex: true,
